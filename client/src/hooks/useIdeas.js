@@ -49,8 +49,11 @@ export const useIdeas = (getVoterIdentifier) => {
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      await Promise.all([fetchIdeas(), fetchStats()]);
-      setLoading(false);
+      try {
+        await Promise.allSettled([fetchIdeas(), fetchStats()]);
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, [fetchIdeas]);

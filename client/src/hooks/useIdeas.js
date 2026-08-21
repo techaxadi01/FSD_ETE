@@ -15,6 +15,7 @@ export const useIdeas = (getVoterIdentifier) => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [domainFilter, setDomainFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [sortBy, setSortBy] = useState('newest'); // newest, oldest, votes
@@ -131,6 +132,7 @@ export const useIdeas = (getVoterIdentifier) => {
 
   const resetFilters = () => {
     setSearchQuery('');
+    setSearchInput('');
     setDomainFilter('All');
     setStatusFilter('All');
     setSortBy('newest');
@@ -143,6 +145,9 @@ export const useIdeas = (getVoterIdentifier) => {
     error,
     searchQuery,
     setSearchQuery,
+    searchInput,
+    setSearchInput,
+    submitSearch: (value = searchInput) => setSearchQuery(value.trim()),
     domainFilter,
     setDomainFilter,
     statusFilter,

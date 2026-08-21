@@ -146,6 +146,13 @@ const reducedVoterUsersData = [
   { name: 'Ritu Bhatt', username: 'ritu_b', email: 'ritu.bhatt@campus.edu', department: 'Electronics Eng' }
 ];
 
+const getRandomVoteCount = (maxVotes) => {
+  if (maxVotes <= 1) return maxVotes;
+  return Math.floor(Math.random() * maxVotes) + 1;
+};
+
+const shuffleArray = (items) => [...items].sort(() => Math.random() - 0.5);
+
 // --- 8 PROJECT CREATORS (INCLUDING 'adi' WITH 2 PROJECTS) ---
 const creatorData = [
   {
@@ -416,14 +423,16 @@ async function seedDatabase() {
     }
     console.log(`Created ${createdVoters.length} voter users.`);
 
-    // 4. Distribute Votes: Ensure each of the 7 voters votes for AT LEAST 5 projects
-    for (let i = 0; i < createdVoters.length; i++) {
-      const voter = createdVoters[i];
-      const voteCount = (i % 2 === 0) ? 6 : 5; // 5 or 6 votes each
-      for (let j = 0; j < voteCount; j++) {
-        const projectIndex = (i + j) % allIdeasToInsert.length;
-        const targetIdea = allIdeasToInsert[projectIndex];
+    // 4. Distribute Votes: randomized counts per idea with no repeated voting
+    const shuffledVoters = shuffleArray(createdVoters);
+    const votePlan = allIdeasToInsert.map(() => getRandomVoteCount(createdVoters.length));
 
+    for (let i = 0; i < createdVoters.length; i++) {
+      const voter = shuffledVoters[i];
+      const votesForThisVoter = votePlan[i % votePlan.length];
+      const ideasToVote = shuffleArray(allIdeasToInsert).slice(0, votesForThisVoter);
+
+      for (const targetIdea of ideasToVote) {
         if (!targetIdea.votedBy.some(id => id.toString() === voter._id.toString())) {
           targetIdea.votedBy.push(voter._id);
           targetIdea.votes += 1;
@@ -454,7 +463,7 @@ async function seedDatabase() {
     console.log('   - Prototype:    ' + allIdeasToInsert.filter(i => i.status === 'Prototype').length);
     console.log('   - Implemented:  ' + allIdeasToInsert.filter(i => i.status === 'Implemented').length);
 
-    console.log('\n🗳️ 7 Voter Verification (Each voted for >= 5 projects):');
+    console.log('\n🗳️ Voter Verification (Randomized vote counts):');
     for (const voter of createdVoters) {
       const userVotes = allIdeasToInsert.filter(i => i.votedBy.some(id => id.toString() === voter._id.toString())).length;
       console.log(`   - ${voter.name} (@${voter.username} | ${voter.email}): ${userVotes} votes`);

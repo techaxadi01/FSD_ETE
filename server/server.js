@@ -1002,6 +1002,13 @@ const reducedVoterUsersData = [
   { name: 'Ritu Bhatt', username: 'ritu_b', email: 'ritu.bhatt@campus.edu', department: 'Electronics Eng' }
 ];
 
+const getRandomVoteCount = (maxVotes) => {
+  if (maxVotes <= 1) return maxVotes;
+  return Math.floor(Math.random() * maxVotes) + 1;
+};
+
+const shuffleArray = (items) => [...items].sort(() => Math.random() - 0.5);
+
 app.post('/api/seed', async (req, res) => {
   try {
     await mongoose.connection.dropDatabase();
@@ -1055,13 +1062,16 @@ app.post('/api/seed', async (req, res) => {
       createdVoters.push(user);
     }
 
-    // Distribute Votes: each of 7 voters votes for >= 5 projects
+    // Distribute Votes: randomized counts per idea with no repeated voting
+    const shuffledVoters = shuffleArray(createdVoters);
+    const votePlan = allIdeasToInsert.map(() => getRandomVoteCount(createdVoters.length));
+
     for (let i = 0; i < createdVoters.length; i++) {
-      const voter = createdVoters[i];
-      const voteCount = (i % 2 === 0) ? 6 : 5;
-      for (let j = 0; j < voteCount; j++) {
-        const projectIndex = (i + j) % allIdeasToInsert.length;
-        const targetIdea = allIdeasToInsert[projectIndex];
+      const voter = shuffledVoters[i];
+      const votesForThisVoter = votePlan[i % votePlan.length];
+      const ideasToVote = shuffleArray(allIdeasToInsert).slice(0, votesForThisVoter);
+
+      for (const targetIdea of ideasToVote) {
         if (!targetIdea.votedBy.some(id => id.toString() === voter._id.toString())) {
           targetIdea.votedBy.push(voter._id);
           targetIdea.votes += 1;

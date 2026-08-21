@@ -29,7 +29,9 @@ const sameId = (a, b) => String(a || '') === String(b || '');
 const ExploreView = ({
   ideas,
   searchQuery,
-  setSearchQuery,
+  searchInput,
+  setSearchInput,
+  onSearchSubmit,
   domainFilter,
   setDomainFilter,
   statusFilter,
@@ -42,14 +44,20 @@ const ExploreView = ({
   onVote,
   onOpenSubmitModal,
   onResetFilters,
-  currentUserId
+  currentUserId,
+  currentUser
 }) => {
   const safeIdeas = Array.isArray(ideas) ? ideas : [];
+  const isOwnIdea = (idea) => currentUserId && (
+    sameId(idea.author?.userId, currentUserId) ||
+    (currentUser?.username && idea.author?.username === currentUser.username) ||
+    (currentUser?.email && idea.author?.email === currentUser.email)
+  );
   const myIdeas = currentUserId
-    ? safeIdeas.filter((idea) => sameId(idea.author?.userId, currentUserId))
+    ? safeIdeas.filter(isOwnIdea)
     : [];
   const otherIdeas = currentUserId
-    ? safeIdeas.filter((idea) => !sameId(idea.author?.userId, currentUserId))
+    ? safeIdeas.filter((idea) => !isOwnIdea(idea))
     : safeIdeas;
 
   const hasActiveFilters =
@@ -69,14 +77,20 @@ const ExploreView = ({
             <Search className="w-4 h-4 text-emerald-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by idea title, problem statement, or technology..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') onSearchSubmit(searchInput);
+              }}
+              placeholder="Type and press Enter to search..."
               className="w-full pl-10 pr-10 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
             />
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery('')}
+                onClick={() => {
+                  setSearchInput('');
+                  onSearchSubmit('');
+                }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               >
                 <X className="w-4 h-4" />
@@ -173,8 +187,8 @@ const ExploreView = ({
       {currentUserId && (
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-sm font-black text-slate-800 dark:text-slate-100">
-              My Projects
+            <h3 className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">
+              MY IDEA
             </h3>
             <span className="text-[11px] text-teal-600 dark:text-teal-400 font-bold">
               Editable by you only
@@ -196,6 +210,7 @@ const ExploreView = ({
                   onDelete={onDeleteIdea}
                   onVote={onVote}
                   currentUserId={currentUserId}
+                  currentUser={currentUser}
                 />
               ))}
             </div>
@@ -240,18 +255,26 @@ const ExploreView = ({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {otherIdeas.map((idea) => (
-            <IdeaCard
-              key={idea._id}
-              idea={idea}
-              onSelect={onSelectIdea}
-              onEdit={onEditIdea}
-              onDelete={onDeleteIdea}
-              onVote={onVote}
-              currentUserId={currentUserId}
-            />
-          ))}
+        <div className="space-y-3">
+          {currentUserId && (
+            <h3 className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider px-1">
+              OTHER IDEAS
+            </h3>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {otherIdeas.map((idea) => (
+              <IdeaCard
+                key={idea._id}
+                idea={idea}
+                onSelect={onSelectIdea}
+                onEdit={onEditIdea}
+                onDelete={onDeleteIdea}
+                onVote={onVote}
+                currentUserId={currentUserId}
+                currentUser={currentUser}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

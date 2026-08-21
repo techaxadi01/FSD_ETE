@@ -20,9 +20,16 @@ const IdeaCard = ({
   onEdit,
   onDelete,
   onVote,
-  currentUserId
+  currentUserId,
+  currentUser
 }) => {
-  const isAuthor = currentUserId && sameId(idea.author?.userId, currentUserId);
+  const isAuthor = Boolean(
+    currentUserId && (
+      sameId(idea.author?.userId, currentUserId) ||
+      (currentUser?.username && idea.author?.username === currentUser.username) ||
+      (currentUser?.email && idea.author?.email === currentUser.email)
+    )
+  );
 
   const domainThemes = {
     'Smart Campus & IoT': 'from-blue-600 to-cyan-500 text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-950/50 border-cyan-200 dark:border-cyan-800',
@@ -181,6 +188,7 @@ const IdeaCard = ({
                 title="Edit Idea"
               >
                 <Edit3 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Edit</span>
               </button>
 
               <button
@@ -192,6 +200,7 @@ const IdeaCard = ({
                 title="Delete Idea"
               >
                 <Trash2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Delete</span>
               </button>
             </>
           )}

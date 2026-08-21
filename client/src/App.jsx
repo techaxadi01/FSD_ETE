@@ -29,7 +29,9 @@ function CampusHubContent() {
     loading,
     error,
     searchQuery,
-    setSearchQuery,
+    searchInput,
+    setSearchInput,
+    submitSearch,
     domainFilter,
     setDomainFilter,
     statusFilter,
@@ -188,7 +190,9 @@ function CampusHubContent() {
               <ExploreView
                 ideas={safeIdeas}
                 searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
+                searchInput={searchInput}
+                setSearchInput={setSearchInput}
+                onSearchSubmit={submitSearch}
                 domainFilter={domainFilter}
                 setDomainFilter={setDomainFilter}
                 statusFilter={statusFilter}
@@ -208,6 +212,7 @@ function CampusHubContent() {
                 }}
                 onResetFilters={resetFilters}
                 currentUserId={user?.id}
+                currentUser={user}
               />
             )}
 

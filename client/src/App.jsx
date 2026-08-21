@@ -47,6 +47,9 @@ function CampusHubContent() {
     resetFilters
   } = useIdeas(getVoterIdentifier);
 
+  const safeIdeas = Array.isArray(ideas) ? ideas : [];
+  const safeStats = stats && typeof stats === 'object' && !Array.isArray(stats) ? stats : null;
+
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => {
@@ -154,7 +157,7 @@ function CampusHubContent() {
               Loading Campus Innovations...
             </p>
           </div>
-        ) : error && ideas.length === 0 ? (
+        ) : error && safeIdeas.length === 0 ? (
           <div className="p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border border-rose-200 dark:border-rose-900/60 shadow-sm max-w-lg mx-auto space-y-4">
             <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-500 flex items-center justify-center">
               <AlertCircle className="w-6 h-6" />
@@ -183,7 +186,7 @@ function CampusHubContent() {
             {/* View 1: Innovations Cards Grid */}
             {activeTab === 'explore' && (
               <ExploreView
-                ideas={ideas}
+                ideas={safeIdeas}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 domainFilter={domainFilter}
@@ -232,7 +235,7 @@ function CampusHubContent() {
                 {/* 4 Pipeline Stage Columns */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {['Review', 'Approved', 'Prototype', 'Implemented'].map((stage) => {
-                    const stageIdeas = ideas.filter((i) => i.status === stage);
+                    const stageIdeas = safeIdeas.filter((i) => i.status === stage);
                     const stageColors = {
                       'Review': 'border-amber-400/40 bg-amber-50/30 dark:bg-amber-950/20 text-amber-600 dark:text-amber-300',
                       'Approved': 'border-teal-400/40 bg-teal-50/30 dark:bg-teal-950/20 text-teal-600 dark:text-teal-300',
@@ -290,8 +293,8 @@ function CampusHubContent() {
             {/* View 3: Analytics & KPIs */}
             {activeTab === 'analytics' && (
               <DashboardMetrics
-                stats={stats}
-                ideas={ideas}
+                stats={safeStats}
+                ideas={safeIdeas}
                 onFilterStatus={(status) => {
                   setStatusFilter(status);
                   setActiveTab('explore');

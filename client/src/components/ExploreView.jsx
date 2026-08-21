@@ -44,12 +44,13 @@ const ExploreView = ({
   onResetFilters,
   currentUserId
 }) => {
+  const safeIdeas = Array.isArray(ideas) ? ideas : [];
   const myIdeas = currentUserId
-    ? ideas.filter((idea) => sameId(idea.author?.userId, currentUserId))
+    ? safeIdeas.filter((idea) => sameId(idea.author?.userId, currentUserId))
     : [];
   const otherIdeas = currentUserId
-    ? ideas.filter((idea) => !sameId(idea.author?.userId, currentUserId))
-    : ideas;
+    ? safeIdeas.filter((idea) => !sameId(idea.author?.userId, currentUserId))
+    : safeIdeas;
 
   const hasActiveFilters =
     searchQuery ||
@@ -159,7 +160,7 @@ const ExploreView = ({
       {/* Output Summary */}
       <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1">
         <span>
-          Showing <strong className="text-slate-800 dark:text-slate-200">{ideas.length}</strong> innovation cards
+          Showing <strong className="text-slate-800 dark:text-slate-200">{safeIdeas.length}</strong> innovation cards
         </span>
         {hasActiveFilters && (
           <span className="text-teal-600 dark:text-teal-400 font-bold">
@@ -203,7 +204,7 @@ const ExploreView = ({
       )}
 
       {/* Output Cards Display Grid */}
-      {ideas.length === 0 ? (
+      {safeIdeas.length === 0 ? (
         <div className="text-center py-16 px-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
           <div className="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-tr from-emerald-500/10 to-blue-500/10 text-teal-600 flex items-center justify-center">
             <Search className="w-8 h-8" />

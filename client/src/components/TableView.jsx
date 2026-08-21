@@ -16,15 +16,20 @@ const TableView = ({
   onUpdateStatus,
   onVote
 }) => {
+  const safeIdeas = Array.isArray(ideas) ? ideas : [];
   const [tableSearch, setTableSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  const filteredIdeas = ideas.filter((idea) => {
+  const filteredIdeas = safeIdeas.filter((idea) => {
+    const title = String(idea.title || '');
+    const studentName = String(idea.studentName || '');
+    const regNo = String(idea.regNo || '');
+    const category = String(idea.category || '');
     const matchesSearch =
-      idea.title.toLowerCase().includes(tableSearch.toLowerCase()) ||
-      idea.studentName.toLowerCase().includes(tableSearch.toLowerCase()) ||
-      idea.regNo.toLowerCase().includes(tableSearch.toLowerCase()) ||
-      idea.category.toLowerCase().includes(tableSearch.toLowerCase());
+      title.toLowerCase().includes(tableSearch.toLowerCase()) ||
+      studentName.toLowerCase().includes(tableSearch.toLowerCase()) ||
+      regNo.toLowerCase().includes(tableSearch.toLowerCase()) ||
+      category.toLowerCase().includes(tableSearch.toLowerCase());
 
     const matchesStatus = statusFilter === 'All' || idea.status === statusFilter;
     return matchesSearch && matchesStatus;

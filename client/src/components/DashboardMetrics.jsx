@@ -19,6 +19,9 @@ const DashboardMetrics = ({
   onFilterDomain,
   onOpenSubmitModal
 }) => {
+  const safeIdeas = Array.isArray(ideas) ? ideas : [];
+  const safeStats = stats && typeof stats === 'object' && !Array.isArray(stats) ? stats : null;
+
   const statusWorkflow = stats?.statusWorkflow || {
     review: 0,
     approved: 0,
@@ -26,8 +29,8 @@ const DashboardMetrics = ({
     implemented: 0
   };
 
-  const totalIdeas = stats?.total || ideas.length || 0;
-  const totalVotes = stats?.totalVotes || ideas.reduce((acc, curr) => acc + (curr.votes || 0), 0);
+  const totalIdeas = safeStats?.total || safeIdeas.length || 0;
+  const totalVotes = safeStats?.totalVotes || safeIdeas.reduce((acc, curr) => acc + (curr.votes || 0), 0);
 
   const domains = [
     { name: 'Smart Campus & IoT', color: 'bg-cyan-500' },
@@ -267,7 +270,7 @@ const DashboardMetrics = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {domains.map((dom) => {
-            const count = stats?.domainCounts?.[dom.name] || ideas.filter((i) => i.domain === dom.name).length;
+            const count = safeStats?.domainCounts?.[dom.name] || safeIdeas.filter((i) => i.domain === dom.name).length;
             const percentage = totalIdeas > 0 ? Math.round((count / totalIdeas) * 100) : 0;
 
             return (

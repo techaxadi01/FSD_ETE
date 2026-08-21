@@ -19,6 +19,7 @@ const DashboardView = ({
   onSelectIdea,
   onVote
 }) => {
+  const safeIdeas = Array.isArray(ideas) ? ideas : [];
   const statusBreakdown = stats?.statusBreakdown || {
     submitted: 0,
     underReview: 0,
@@ -29,8 +30,8 @@ const DashboardView = ({
   };
 
   const activeApprovedCount = (statusBreakdown.approved || 0) + (statusBreakdown.inProgress || 0);
-  const totalCount = stats?.total || ideas.length || 0;
-  const totalVotes = stats?.totalVotes || ideas.reduce((acc, curr) => acc + (curr.votes || 0), 0);
+  const totalCount = stats?.total || safeIdeas.length || 0;
+  const totalVotes = stats?.totalVotes || safeIdeas.reduce((acc, curr) => acc + (curr.votes || 0), 0);
 
   // Top 3 trending ideas by votes
   const trendingIdeas = [...ideas]
@@ -295,7 +296,7 @@ const DashboardView = ({
 
           <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
             {categories.map((cat) => {
-              const count = stats?.categoryCounts?.[cat.name] || ideas.filter(i => i.category === cat.name).length;
+              const count = stats?.categoryCounts?.[cat.name] || safeIdeas.filter(i => i.category === cat.name).length;
               const percentage = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
 
               return (

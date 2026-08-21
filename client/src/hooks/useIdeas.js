@@ -29,18 +29,36 @@ export const useIdeas = (getVoterIdentifier) => {
       if (sortBy) params.sort = sortBy;
 
       const data = await getIdeas(params);
-      setIdeas(data);
+      const normalizedIdeas = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.ideas)
+          ? data.ideas
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+      if (!Array.isArray(data)) {
+        console.warn('Unexpected ideas response shape:', data);
+      }
+
+      setIdeas(normalizedIdeas);
       setError(null);
     } catch (err) {
       console.error('Error loading ideas:', err);
       setError(err.response?.data?.error || 'Failed to connect to idea repository.');
+      setIdeas([]);
     }
   }, [searchQuery, domainFilter, statusFilter, sortBy]);
 
   const fetchStats = async () => {
     try {
       const data = await getStats();
-      setStats(data);
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        setStats(data);
+      } else {
+        console.warn('Unexpected stats response shape:', data);
+        setStats(null);
+      }
     } catch (err) {
       console.error('Error loading statistics:', err);
     }

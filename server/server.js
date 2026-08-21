@@ -13,19 +13,30 @@ app.use(express.json());
 app.use(cors());
 
 const JWT_SECRET = process.env.JWT_SECRET || 'campus_innovation_hub_secret_key_2026';
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || process.env.MONGODB_URL;
 
 // MongoDB Atlas Connection (serverless-safe cache)
 let cachedConnection = global.__mongoConnection;
 let cachedPromise = global.__mongoPromise;
 
 async function connectToDatabase() {
+  if (!MONGO_URI) {
+    throw new Error('MongoDB connection variable is missing. Set MONGO_URI in Vercel.');
+  }
+
   if (cachedConnection && mongoose.connection.readyState === 1) {
     return cachedConnection;
   }
 
   if (!cachedPromise) {
-    cachedPromise = mongoose.connect(process.env.MONGO_URI).then((mongooseInstance) => {
+    cachedPromise = mongoose.connect(MONGO_URI, {
+      serverSelectionTimeoutMS: 10000
+    }).then((mongooseInstance) => {
       return mongooseInstance;
+    }).catch((err) => {
+      cachedPromise = null;
+      global.__mongoPromise = null;
+      throw err;
     });
     global.__mongoPromise = cachedPromise;
   }
@@ -733,7 +744,7 @@ const creatorSeedData = [
     name: 'Aarav Sharma',
     username: 'aarav',
     email: 'aarav.sharma@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Computer Science & Engineering',
     role: 'Innovator',
     projects: [
@@ -755,7 +766,7 @@ const creatorSeedData = [
     name: 'Priya Nair',
     username: 'priya',
     email: 'priya.nair@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Electrical & Electronics',
     role: 'Innovator',
     projects: [
@@ -777,7 +788,7 @@ const creatorSeedData = [
     name: 'Rohan Verma',
     username: 'rohan',
     email: 'rohan.verma@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Information Technology',
     role: 'Student',
     projects: [
@@ -799,7 +810,7 @@ const creatorSeedData = [
     name: 'Ananya Patel',
     username: 'ananya',
     email: 'ananya.patel@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Biotechnology & Health Sciences',
     role: 'Innovator',
     projects: [
@@ -821,7 +832,7 @@ const creatorSeedData = [
     name: 'Vikram Singh',
     username: 'vikram',
     email: 'vikram.singh@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Electronics & Communication',
     role: 'Innovator',
     projects: [
@@ -841,7 +852,7 @@ const creatorSeedData = [
     name: 'Kavita Menon',
     username: 'kavita',
     email: 'kavita.menon@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Civil & Environmental Engineering',
     role: 'Student',
     projects: [
@@ -863,7 +874,7 @@ const creatorSeedData = [
     name: 'Sneha Roy',
     username: 'sneha',
     email: 'sneha.roy@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Management & Fintech',
     role: 'Student',
     projects: [
@@ -934,7 +945,7 @@ const reducedCreatorSeedData = [
     name: 'Aarav Sharma',
     username: 'aarav',
     email: 'aarav.sharma@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Computer Science & Engineering',
     role: 'Innovator',
     projects: [
@@ -954,7 +965,7 @@ const reducedCreatorSeedData = [
     name: 'Priya Nair',
     username: 'priya',
     email: 'priya.nair@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Electrical & Electronics',
     role: 'Innovator',
     projects: [
@@ -1014,7 +1025,7 @@ app.post('/api/seed', async (req, res) => {
     await mongoose.connection.dropDatabase();
 
     const salt = await bcrypt.genSalt(10);
-    const defaultPasswordHash = await bcrypt.hash('password123', salt);
+    const defaultPasswordHash = await bcrypt.hash('123', salt);
     const adiPasswordHash = await bcrypt.hash('000', salt);
 
     // Create Creators

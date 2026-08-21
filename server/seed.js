@@ -78,7 +78,7 @@ const reducedCreatorData = [
     name: 'Aarav Sharma',
     username: 'aarav',
     email: 'aarav.sharma@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Computer Science & Engineering',
     role: 'Innovator',
     projects: [
@@ -98,7 +98,7 @@ const reducedCreatorData = [
     name: 'Priya Nair',
     username: 'priya',
     email: 'priya.nair@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Electrical & Electronics',
     role: 'Innovator',
     projects: [
@@ -118,7 +118,7 @@ const reducedCreatorData = [
     name: 'Rohan Verma',
     username: 'rohan',
     email: 'rohan.verma@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Information Technology',
     role: 'Student',
     projects: [
@@ -193,7 +193,7 @@ const creatorData = [
     name: 'Aarav Sharma',
     username: 'aarav',
     email: 'aarav.sharma@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Computer Science & Engineering',
     role: 'Innovator',
     projects: [
@@ -215,7 +215,7 @@ const creatorData = [
     name: 'Priya Nair',
     username: 'priya',
     email: 'priya.nair@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Electrical & Electronics',
     role: 'Innovator',
     projects: [
@@ -237,7 +237,7 @@ const creatorData = [
     name: 'Rohan Verma',
     username: 'rohan',
     email: 'rohan.verma@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Information Technology',
     role: 'Student',
     projects: [
@@ -259,7 +259,7 @@ const creatorData = [
     name: 'Ananya Patel',
     username: 'ananya',
     email: 'ananya.patel@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Biotechnology & Health Sciences',
     role: 'Innovator',
     projects: [
@@ -281,7 +281,7 @@ const creatorData = [
     name: 'Vikram Singh',
     username: 'vikram',
     email: 'vikram.singh@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Electronics & Communication',
     role: 'Innovator',
     projects: [
@@ -301,7 +301,7 @@ const creatorData = [
     name: 'Kavita Menon',
     username: 'kavita',
     email: 'kavita.menon@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Civil & Environmental Engineering',
     role: 'Student',
     projects: [
@@ -323,7 +323,7 @@ const creatorData = [
     name: 'Sneha Roy',
     username: 'sneha',
     email: 'sneha.roy@campus.edu',
-    passwordRaw: 'password123',
+    passwordRaw: '123',
     department: 'Management & Fintech',
     role: 'Student',
     projects: [
@@ -371,7 +371,7 @@ async function seedDatabase() {
     console.log('Database dropped.');
 
     const salt = await bcrypt.genSalt(10);
-    const defaultPasswordHash = await bcrypt.hash('password123', salt);
+    const defaultPasswordHash = await bcrypt.hash('123', salt);
     const adiPasswordHash = await bcrypt.hash('000', salt); // Specific pw '000' for adi
 
     // 2. Create Creators (including adi)

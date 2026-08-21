@@ -211,6 +211,7 @@ const ExploreView = ({
                   onVote={onVote}
                   currentUserId={currentUserId}
                   currentUser={currentUser}
+                  showOwnerActions
                 />
               ))}
             </div>

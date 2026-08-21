@@ -21,9 +21,10 @@ const IdeaCard = ({
   onDelete,
   onVote,
   currentUserId,
-  currentUser
+  currentUser,
+  showOwnerActions = false
 }) => {
-  const isAuthor = Boolean(
+  const isAuthor = showOwnerActions || Boolean(
     currentUserId && (
       sameId(idea.author?.userId, currentUserId) ||
       (currentUser?.username && idea.author?.username === currentUser.username) ||
@@ -184,11 +185,11 @@ const IdeaCard = ({
                   e.stopPropagation();
                   onEdit(idea);
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-teal-600 dark:hover:text-teal-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-bold text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/50 transition"
                 title="Edit Idea"
               >
                 <Edit3 className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Edit</span>
+                <span>Edit</span>
               </button>
 
               <button
@@ -196,11 +197,11 @@ const IdeaCard = ({
                   e.stopPropagation();
                   onDelete(idea._id);
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition"
+                className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition"
                 title="Delete Idea"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Delete</span>
+                <span>Delete</span>
               </button>
             </>
           )}

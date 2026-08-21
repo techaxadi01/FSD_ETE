@@ -2,6 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { loginUser, registerUser, getMe } from '../services/api';
 import { AuthContext } from './auth-context';
 
+const normalizeUser = (user) => {
+  if (!user) return null;
+  return { ...user, id: user.id || user._id };
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem('campus_inno_token'));
@@ -17,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     const data = await loginUser({ email, password });
     localStorage.setItem('campus_inno_token', data.token);
     setToken(data.token);
-    setUser(data.user);
+    setUser(normalizeUser(data.user));
     return data;
   };
 
@@ -25,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     const data = await registerUser(userData);
     localStorage.setItem('campus_inno_token', data.token);
     setToken(data.token);
-    setUser(data.user);
+    setUser(normalizeUser(data.user));
     return data;
   };
 
@@ -40,7 +45,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const data = await getMe();
-          setUser(data.user);
+          setUser(normalizeUser(data.user));
         } catch (err) {
           console.error('Session expired or invalid:', err);
           logout();

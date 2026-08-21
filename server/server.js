@@ -14,10 +14,36 @@ app.use(cors());
 
 const JWT_SECRET = process.env.JWT_SECRET || 'campus_innovation_hub_secret_key_2026';
 
-// MongoDB Atlas Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB Atlas Connected: Campus Idea & Innovation Hub'))
-  .catch((err) => console.error('MongoDB Connection Error:', err));
+// MongoDB Atlas Connection (serverless-safe cache)
+let cachedConnection = global.__mongoConnection;
+let cachedPromise = global.__mongoPromise;
+
+async function connectToDatabase() {
+  if (cachedConnection && mongoose.connection.readyState === 1) {
+    return cachedConnection;
+  }
+
+  if (!cachedPromise) {
+    cachedPromise = mongoose.connect(process.env.MONGO_URI).then((mongooseInstance) => {
+      return mongooseInstance;
+    });
+    global.__mongoPromise = cachedPromise;
+  }
+
+  cachedConnection = await cachedPromise;
+  global.__mongoConnection = cachedConnection;
+  return cachedConnection;
+}
+
+app.use(async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (err) {
+    console.error('MongoDB Connection Error:', err);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
 
 // --- CONSTANTS ---
 const VALID_DOMAINS = [

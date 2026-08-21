@@ -24,6 +24,8 @@ const VALID_DOMAINS = [
 
 const VALID_STATUSES = ['All', 'Review', 'Approved', 'Prototype', 'Implemented'];
 
+const sameId = (a, b) => String(a || '') === String(b || '');
+
 const ExploreView = ({
   ideas,
   searchQuery,
@@ -43,10 +45,10 @@ const ExploreView = ({
   currentUserId
 }) => {
   const myIdeas = currentUserId
-    ? ideas.filter((idea) => idea.author?.userId === currentUserId)
+    ? ideas.filter((idea) => sameId(idea.author?.userId, currentUserId))
     : [];
   const otherIdeas = currentUserId
-    ? ideas.filter((idea) => idea.author?.userId !== currentUserId)
+    ? ideas.filter((idea) => !sameId(idea.author?.userId, currentUserId))
     : ideas;
 
   const hasActiveFilters =
@@ -167,7 +169,7 @@ const ExploreView = ({
       </div>
 
       {/* Owner Projects Section */}
-      {currentUserId && myIdeas.length > 0 && (
+      {currentUserId && (
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
             <h3 className="text-sm font-black text-slate-800 dark:text-slate-100">
@@ -178,19 +180,25 @@ const ExploreView = ({
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {myIdeas.map((idea) => (
-              <IdeaCard
-                key={idea._id}
-                idea={idea}
-                onSelect={onSelectIdea}
-                onEdit={onEditIdea}
-                onDelete={onDeleteIdea}
-                onVote={onVote}
-                currentUserId={currentUserId}
-              />
-            ))}
-          </div>
+          {myIdeas.length === 0 ? (
+            <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm px-4 py-6 text-sm text-slate-500 dark:text-slate-400">
+              You have not submitted any projects yet.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {myIdeas.map((idea) => (
+                <IdeaCard
+                  key={idea._id}
+                  idea={idea}
+                  onSelect={onSelectIdea}
+                  onEdit={onEditIdea}
+                  onDelete={onDeleteIdea}
+                  onVote={onVote}
+                  currentUserId={currentUserId}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 

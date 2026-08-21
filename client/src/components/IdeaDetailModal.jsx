@@ -18,6 +18,7 @@ import {
 import WorkflowBadge from './WorkflowBadge';
 
 const VALID_STATUSES = ['Review', 'Approved', 'Prototype', 'Implemented'];
+const sameId = (a, b) => String(a || '') === String(b || '');
 
 const IdeaDetailModal = ({
   idea,
@@ -36,7 +37,7 @@ const IdeaDetailModal = ({
 
   if (!idea) return null;
 
-  const isAuthor = currentUser && idea.author?.userId === currentUser.id;
+  const isAuthor = currentUser && sameId(idea.author?.userId, currentUser.id);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();

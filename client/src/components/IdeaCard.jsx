@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import WorkflowBadge from './WorkflowBadge';
 
+const sameId = (a, b) => String(a || '') === String(b || '');
+
 const IdeaCard = ({
   idea,
   onSelect,
@@ -20,7 +22,7 @@ const IdeaCard = ({
   onVote,
   currentUserId
 }) => {
-  const isAuthor = currentUserId && idea.author?.userId === currentUserId;
+  const isAuthor = currentUserId && sameId(idea.author?.userId, currentUserId);
 
   const domainThemes = {
     'Smart Campus & IoT': 'from-blue-600 to-cyan-500 text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-950/50 border-cyan-200 dark:border-cyan-800',

@@ -50,11 +50,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       onClose();
     } catch (err) {
       console.error(err);
-      const serverError = err.response?.data?.error;
-      const message = typeof serverError === 'string'
-        ? serverError
-        : serverError?.message || 'Authentication failed. Please check your credentials.';
-      setError(message);
+      setError(err.response?.data?.error || 'Authentication failed. Please check your credentials.');
     } finally {
       setIsSubmitting(false);
     }
